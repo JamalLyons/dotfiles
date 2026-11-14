@@ -63,8 +63,6 @@ struct RunMetaFile {
     plan_digest: String,
     job_id: String,
     status: RunViewStatus,
-    #[serde(default)]
-    upgrade: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     profile: Option<String>,
 }
@@ -77,7 +75,6 @@ struct RunMeta {
     plan_digest: String,
     job_id: String,
     status: RunViewStatus,
-    upgrade: bool,
     profile: Option<String>,
 }
 
@@ -166,7 +163,6 @@ impl RunIndex {
             plan_digest: plan.digest(),
             job_id: job_id.to_string(),
             status: RunViewStatus::Running,
-            upgrade: input.upgrade,
             profile: input.profile.clone(),
         };
         if let Err(error) = write_meta(&meta) {
@@ -317,7 +313,6 @@ fn stored_from_dir(dir: &Path, meta: &RunMeta, owner_uid: u32) -> Option<StoredP
         home: plan.home.clone(),
         repo_root: Some(plan.repo_root.clone()),
         profile: meta.profile.clone().or_else(|| plan.profile.clone()),
-        upgrade: meta.upgrade,
     };
     Some(StoredPlan {
         plan,
@@ -340,7 +335,6 @@ fn load_run(dir: &Path) -> Result<RunMeta, String> {
             plan_digest: file.plan_digest,
             job_id: file.job_id,
             status: file.status,
-            upgrade: file.upgrade,
             profile: file.profile,
         };
         if meta.run_id.is_empty() {
@@ -363,7 +357,6 @@ fn load_run(dir: &Path) -> Result<RunMeta, String> {
         plan_digest,
         job_id: String::new(),
         status: status_from_steps(&steps, false),
-        upgrade: false,
         profile: None,
     })
 }
@@ -435,7 +428,6 @@ fn write_meta(meta: &RunMeta) -> std::io::Result<()> {
         plan_digest: meta.plan_digest.clone(),
         job_id: meta.job_id.clone(),
         status: meta.status,
-        upgrade: meta.upgrade,
         profile: meta.profile.clone(),
     };
     let bytes = serde_json::to_vec(&file)

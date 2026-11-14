@@ -20,10 +20,6 @@ pub struct PlanArgs {
     #[arg(long)]
     pub profile: Option<String>,
 
-    /// Include brew upgrades for packages `brew outdated` lists
-    #[arg(long)]
-    pub upgrade: bool,
-
     /// Print the plan as JSON
     #[arg(long)]
     pub json: bool,
@@ -108,7 +104,6 @@ pub fn plan_input(args: &PlanArgs, absolute: bool) -> Result<PlanInput> {
         home,
         repo_root,
         profile: args.profile.clone(),
-        upgrade: args.upgrade,
     })
 }
 

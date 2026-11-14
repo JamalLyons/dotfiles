@@ -314,10 +314,10 @@ uses the daemon.
   to overwrite an existing file.
 - `dotfilesync jobs list|show|watch|result|cancel` let you reconnect to jobs. `jobs follow` is an
   alias of `jobs watch`.
-- `dotfilesync plan [--manifest] [--profile NAME] [--upgrade] [--json]` prints one line per action
+- `dotfilesync plan [--manifest] [--profile NAME] [--json]` prints one line per action
   as `[risk] [rev|irrev] [copy|link|brew|ensure|fisher|shell] summary`, then totals. `--json` prints
   the plan document. Two runs against the same machine produce the same JSON.
-- `dotfilesync apply [--manifest] [--profile] [--upgrade] [--yes] [--allow-sudo] [--dry-run]`
+- `dotfilesync apply [--manifest] [--profile] [--yes] [--allow-sudo] [--dry-run]`
   prints the plan, then approves and applies it through the daemon. Without `--yes`, a TTY asks
   `Apply N actions? [y/N]`. A non-TTY without `--yes` is a dry run and exits 0. `--dry-run` never
   applies. `--allow-sudo` is the only way a login-shell step may run. Ctrl-C detaches; the job

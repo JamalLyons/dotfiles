@@ -425,10 +425,7 @@ fn risk_label(risk: Risk) -> &'static str {
 
 fn action_tag(kind: &ActionKind) -> &'static str {
     match kind {
-        ActionKind::BrewInstallFormula { .. }
-        | ActionKind::BrewInstallCask { .. }
-        | ActionKind::BrewUpgradeFormula { .. }
-        | ActionKind::BrewUpgradeCask { .. } => "brew",
+        ActionKind::BrewInstallFormula { .. } | ActionKind::BrewInstallCask { .. } => "brew",
         ActionKind::LinkFile { .. } => "link",
         ActionKind::CopyFile { .. } => "copy",
         ActionKind::EnsureLocalOverride { .. } => "ensure",

@@ -268,14 +268,6 @@ fn execute(
             brew(ctx, &["install", "--cask", name])?;
             Ok(done())
         }
-        ActionKind::BrewUpgradeFormula { name } => {
-            brew(ctx, &["upgrade", name])?;
-            Ok(done())
-        }
-        ActionKind::BrewUpgradeCask { name } => {
-            brew(ctx, &["upgrade", "--cask", name])?;
-            Ok(done())
-        }
         ActionKind::CopyFile { source, target } => {
             refuse_managed_target(plan, target)?;
             let backup_path = backup_if_present(plan, ctx, run_id, target)?;

@@ -60,7 +60,6 @@ target = "~/.config/demo/config.txt"
         home: env.home.clone(),
         repo_root: Some(repo),
         profile: None,
-        upgrade: false,
     };
     (target_dir.join("config.txt"), env.home.clone(), input)
 }
@@ -260,8 +259,7 @@ fn unfinished_run_is_interrupted_after_restart_and_can_resume() {
         "plan_id": plan.plan_id(),
         "plan_digest": plan.digest(),
         "job_id": "j-old0001",
-        "status": "running",
-        "upgrade": false
+        "status": "running"
     });
     let meta_path = run_dir.join("meta.json");
     fs::write(&meta_path, serde_json::to_vec(&meta).unwrap()).unwrap();

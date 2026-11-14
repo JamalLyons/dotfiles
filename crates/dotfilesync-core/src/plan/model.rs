@@ -22,12 +22,6 @@ pub enum ActionKind {
     BrewInstallCask {
         name: String,
     },
-    BrewUpgradeFormula {
-        name: String,
-    },
-    BrewUpgradeCask {
-        name: String,
-    },
     LinkFile {
         source: PathBuf,
         target: PathBuf,
@@ -97,6 +91,4 @@ pub struct PlanInput {
     /// `None` selects a profile automatically from `[select]`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub profile: Option<String>,
-    #[serde(default)]
-    pub upgrade: bool,
 }

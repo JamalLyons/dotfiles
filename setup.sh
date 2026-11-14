@@ -102,7 +102,7 @@ print_summary() {
   echo ""
   info "Useful commands:"
   echo "  helpme           Show custom Fish commands"
-  echo "  brewup           Update Homebrew formulas/casks + Fisher"
+  echo "  fisherup         Update Fisher plugins"
   echo "  reload           Reload Fish config"
   echo "  fnm list         List Node versions"
   echo "  xcodes install --latest --select"

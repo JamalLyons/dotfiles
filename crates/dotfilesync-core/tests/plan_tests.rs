@@ -65,7 +65,6 @@ fn two_plan_runs_produce_identical_json() {
         home: home.clone(),
         repo_root: Some(tmp.path().join("repo")),
         profile: None,
-        upgrade: false,
     };
     let first = run_plan(&input, &runner, "test-host", &mut |_| {}, &|| false).unwrap();
     let second = run_plan(&input, &runner, "test-host", &mut |_| {}, &|| false).unwrap();
