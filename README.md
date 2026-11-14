@@ -112,7 +112,7 @@ Global Zed config lives in [`zed/settings.json`](zed/settings.json) and installs
 
 ### Updating packages
 
-In Fish, run `brewup` to refresh Homebrew formulas/casks (and Fisher plugins) — similar to `apt update && apt upgrade` on Linux.
+Homebrew formulae and casks are updated through [Vorssaint](https://github.com/vorssaint/vorssaint-utils) (App updates / Homebrew manager). In Fish, run `fisherup` to update Fisher plugins.
 
 ## Node via fnm
 
@@ -140,7 +140,7 @@ In Fish, run `helpme` for the full list. Highlights:
 | Command | Description |
 |---------|-------------|
 | `helpme` | List custom commands (links to this repo) |
-| `brewup` | Update Homebrew formulas, casks, and Fisher |
+| `fisherup` | Update Fisher plugins |
 | `reload` | Reload Fish config |
 | `editfish` | Open config in `$EDITOR` |
 | `editenv` | Open `~/.config/fish/conf.d/local.fish` in `$EDITOR` |
@@ -247,7 +247,7 @@ cargo run -p dotfilesync-cli -- import-brewfile --brewfile Brewfile --output dot
 `dotfilesync plan` prints the actions that would bring this machine in line with `dotfilesync.toml`. `dotfilesync apply` reviews that plan and, after you confirm, runs it through the daemon. A converged machine produces an empty plan.
 
 ```bash
-dotfilesync plan [--manifest] [--profile] [--upgrade] [--json]
+dotfilesync plan [--manifest] [--profile] [--json]
 dotfilesync apply [--profile] [--yes] [--allow-sudo] [--dry-run]
 dotfilesync apply --resume <run_id>
 dotfilesync runs [list|show <id>]

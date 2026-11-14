@@ -63,15 +63,10 @@ pub fn run_plan(
     progress(OpStage::Planning);
 
     let login_shell = observe_login_shell(runner);
-    let outdated = if input.upgrade {
-        outdated_packages(runner, brew.brew_path.as_deref())?
-    } else {
-        Outdated::default()
-    };
 
     let mut drafts = Vec::new();
     if brew.available && brew.packages_enumerated {
-        push_packages(&mut drafts, &resolved, &brew, &outdated, input.upgrade);
+        push_packages(&mut drafts, &resolved, &brew);
     }
     let mut file_actions = Vec::new();
     let mut override_actions = Vec::new();
@@ -182,19 +177,7 @@ fn default_repo_root(manifest: &Path, repo_root: Option<&Path>) -> PathBuf {
     })
 }
 
-#[derive(Default)]
-struct Outdated {
-    formulae: HashSet<String>,
-    casks: HashSet<String>,
-}
-
-fn push_packages(
-    drafts: &mut Vec<Draft>,
-    resolved: &ResolvedManifest,
-    brew: &BrewDiscoveryResult,
-    outdated: &Outdated,
-    upgrade: bool,
-) {
+fn push_packages(drafts: &mut Vec<Draft>, resolved: &ResolvedManifest, brew: &BrewDiscoveryResult) {
     let installed_formulae: HashSet<&str> = brew.formulae.iter().map(|p| p.name.as_str()).collect();
     let installed_casks: HashSet<&str> = brew.casks.iter().map(|p| p.name.as_str()).collect();
 
@@ -212,27 +195,6 @@ fn push_packages(
             drafts.push(package_action(
                 ActionKind::BrewInstallCask { name: name.clone() },
                 format!("brew install --cask {name}"),
-                Risk::Medium,
-            ));
-        }
-    }
-    if !upgrade {
-        return;
-    }
-    for name in &resolved.homebrew.formulae {
-        if installed_formulae.contains(name.as_str()) && outdated.formulae.contains(name) {
-            drafts.push(package_action(
-                ActionKind::BrewUpgradeFormula { name: name.clone() },
-                format!("brew upgrade {name}"),
-                Risk::Medium,
-            ));
-        }
-    }
-    for name in &resolved.homebrew.casks {
-        if installed_casks.contains(name.as_str()) && outdated.casks.contains(name) {
-            drafts.push(package_action(
-                ActionKind::BrewUpgradeCask { name: name.clone() },
-                format!("brew upgrade --cask {name}"),
                 Risk::Medium,
             ));
         }
@@ -393,32 +355,6 @@ fn resolve_shell(
         ));
     }
     Ok(PathBuf::from(prefix).join("bin").join(name))
-}
-
-fn outdated_packages(
-    runner: &dyn CommandRunner,
-    brew_path: Option<&Path>,
-) -> Result<Outdated, OpError> {
-    let Some(brew_path) = brew_path else {
-        return Ok(Outdated::default());
-    };
-    let formulae = run_brew(runner, brew_path, &["outdated", "--formula"])
-        .map_err(|error| OpError::Failed(format!("failed to query outdated formulae: {error}")))?;
-    let casks = run_brew(runner, brew_path, &["outdated", "--cask"])
-        .map_err(|error| OpError::Failed(format!("failed to query outdated casks: {error}")))?;
-    Ok(Outdated {
-        formulae: parse_names(&formulae.stdout),
-        casks: parse_names(&casks.stdout),
-    })
-}
-
-fn parse_names(stdout: &str) -> HashSet<String> {
-    stdout
-        .lines()
-        .filter_map(|line| line.split_whitespace().next())
-        .filter(|name| !name.is_empty())
-        .map(str::to_string)
-        .collect()
 }
 
 fn run_brew(

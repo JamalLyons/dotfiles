@@ -85,8 +85,8 @@ target = "~/.config/fish/conf.d/fnm.fish"
 description = "fnm Node manager integration"
 
 [[files]]
-source = "fish/functions/brewup.fish"
-target = "~/.config/fish/functions/brewup.fish"
+source = "fish/functions/fisherup.fish"
+target = "~/.config/fish/functions/fisherup.fish"
 
 [[files]]
 source = "fish/functions/cdf.fish"

@@ -11,7 +11,7 @@ function helpme
     echo "    reload          - Reload fish configuration"
     echo "    editfish        - Open fish config in \$EDITOR"
     echo "    editenv         - Open local env vars in \$EDITOR"
-    echo "    brewup          - Update Homebrew formulas, casks, and Fisher"
+    echo "    fisherup        - Update Fisher plugins"
     echo "    local.fish      - Private env vars: ~/.config/fish/conf.d/local.fish"
     echo ""
     echo "  Xcode:"

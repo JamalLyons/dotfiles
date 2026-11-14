@@ -9,19 +9,19 @@ Schema, profiles, and merge order: [manifest.md](manifest.md).
 ## Commands
 
 ```bash
-dotfilesync plan [--manifest] [--profile] [--upgrade] [--json]
+dotfilesync plan [--manifest] [--profile] [--json]
 dotfilesync apply [--profile] [--yes] [--allow-sudo] [--dry-run]
 dotfilesync apply --resume <run_id>
 dotfilesync runs [list|show <id>]
 ```
 
-`--profile` selects a named profile. Omit it and selection is automatic (`select.hostnames`, then `select.default`, then the base layer). `--upgrade` adds `brew upgrade` actions for declared packages that `brew outdated` lists. Without it, already-installed packages are left alone.
+`--profile` selects a named profile. Omit it and selection is automatic (`select.hostnames`, then `select.default`, then the base layer). Already-installed packages are left alone: dotfilesync never upgrades Homebrew packages (use Vorssaint or `brew upgrade` for that).
 
 `plan` may run in-process. `apply` requires the daemon (`dotfilesync service start`). The journal and the locks live in daemon state.
 
 ## Workflow
 
-1. **Plan.** `dotfilesync plan` loads the manifest, resolves the profile, and emits only what differs. Action order is fixed: formula installs, cask installs, formula upgrades, cask upgrades, files sorted by target path, local overrides, Fisher, login shell. Ids are `a-001` upward in that order. The plan id is `p-` plus the first 16 hex characters of the plan digest.
+1. **Plan.** `dotfilesync plan` loads the manifest, resolves the profile, and emits only what differs. Action order is fixed: formula installs, cask installs, files sorted by target path, local overrides, Fisher, login shell. Ids are `a-001` upward in that order. The plan id is `p-` plus the first 16 hex characters of the plan digest.
 2. **Review.** Human output is one line per action: `[risk] [rev|irrev] [copy|link] summary`, then totals. `--json` prints the plan struct. Run `plan` twice on an unchanged machine and the JSON body matches.
 3. **Approve.** `apply` prints the plan. On a TTY, without `--yes`, it asks `Apply N actions? [y/N]`. A non-TTY without `--yes` does not apply (dry-run, exit 0, with a note). `--dry-run` never applies.
 4. **Apply.** After approval the daemon takes the Homebrew and home locks and runs the plan. Progress is a step at a time. Ctrl-C detaches the CLI and leaves the job running; follow it with `dotfilesync jobs follow <id>`.
@@ -48,7 +48,6 @@ Risk and reversibility are set by the planner. `backup` is true when a copy or l
 |---|---|---|---|
 | `brew install <formula>` | low | no | Installs the formula. Never auto-uninstalls. |
 | `brew install --cask <cask>` | medium | no | Installs the cask. Never auto-uninstalls. |
-| `brew upgrade` formula or cask (`--upgrade` only, and only when `brew outdated` lists it) | medium | no | Upgrades in place. No historical version is restored. |
 | Copy or link, target absent | low | yes | Creates the file. Undo is removing it. |
 | Copy or link, target exists and differs | medium | yes | Backs up first, then replaces. Undo is restoring the backup. |
 | Ensure local override (missing only) | low | yes | Creates the file when it is absent. Does not rewrite an existing one. |
@@ -62,7 +61,6 @@ Risk and reversibility are set by the planner. `backup` is true when a copy or l
 | Install Homebrew if missing | Not ported | Discovery only. Apply assumes `brew` is already on the machine. |
 | `brew bundle` formulae | `BrewInstallFormula` | Missing formulae only. No uninstall. |
 | `brew bundle` casks | `BrewInstallCask` | Missing casks only. |
-| Upgrade installed packages | `BrewUpgradeFormula` / `BrewUpgradeCask` | Only with `plan --upgrade`, and only names `brew outdated` reports. |
 | `rustup` toolchain bootstrap (`ensure_rustup`) | The `rustup` formula, if declared | No `rustup-init` / default-toolchain step beyond the formula. |
 | 0xProto via `font-0xproto`, including after `--skip-casks` | The `font-0xproto` cask | No separate font step and no `--skip-fonts`. A cask-only skip in setup.sh still installs the font; plan/apply will not, unless the cask remains in the resolved manifest. |
 | Sync `fish/` templates (copy, backup when different) | `CopyFile` for each tracked fish file whose bytes differ | No interactive overwrite prompt. The reviewed plan is the confirmation. Backup goes under the daemon backups dir, and the journal keeps the `name.backup.YYYYmmdd_HHMMSS` stamp. |

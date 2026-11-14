@@ -585,7 +585,6 @@ mod tests {
                 home: PathBuf::from("/tmp/home"),
                 repo_root: None,
                 profile: Some("work".into()),
-                upgrade: true,
             },
         };
         let frame = plan_req.clone().into_frame(9);

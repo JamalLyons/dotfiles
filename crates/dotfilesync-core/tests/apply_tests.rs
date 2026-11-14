@@ -72,7 +72,6 @@ target = "~/.config/app.conf"
         home: home.clone(),
         repo_root: Some(repo.clone()),
         profile: None,
-        upgrade: false,
     };
     let plan = run_plan(&input, &runner, "host", &mut |_| {}, &|| false).unwrap();
     assert_eq!(plan.actions.len(), 1);
@@ -131,7 +130,6 @@ formulae = ["alpha", "beta", "gamma"]
         home: tmp.path().join("home"),
         repo_root: Some(repo),
         profile: None,
-        upgrade: false,
     };
     fs::create_dir_all(&input.home).unwrap();
     let plan = run_plan(&input, &failing, "host", &mut |_| {}, &|| false).unwrap();
@@ -211,7 +209,6 @@ target = "~/.config/fish/conf.d/local.fish"
         home: home.clone(),
         repo_root: Some(repo),
         profile: None,
-        upgrade: false,
     };
     let plan = run_plan(&input, &runner, "host", &mut |_| {}, &|| false).unwrap();
     assert!(!plan.actions.iter().any(|action| matches!(
@@ -259,7 +256,6 @@ target = "~/.config/app.conf"
         home: home.clone(),
         repo_root: Some(repo),
         profile: None,
-        upgrade: false,
     };
     let plan = run_plan(&input, &runner, "host", &mut |_| {}, &|| false).unwrap();
     assert_eq!(plan.actions.len(), 1);
@@ -299,7 +295,6 @@ mode = "symlink"
         home: home.clone(),
         repo_root: Some(repo.clone()),
         profile: None,
-        upgrade: false,
     };
     let plan = run_plan(&input, &runner, "host", &mut |_| {}, &|| false).unwrap();
     assert!(matches!(plan.actions[0].kind, ActionKind::LinkFile { .. }));

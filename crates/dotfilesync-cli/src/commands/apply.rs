@@ -36,10 +36,6 @@ pub struct ApplyArgs {
     #[arg(long)]
     pub dry_run: bool,
 
-    /// Include brew upgrades for packages `brew outdated` lists
-    #[arg(long)]
-    pub upgrade: bool,
-
     /// Continue a run that stopped before every step finished
     #[arg(long, value_name = "RUN_ID")]
     pub resume: Option<String>,
@@ -168,7 +164,6 @@ fn plan_args(args: &ApplyArgs) -> PlanArgs {
     PlanArgs {
         manifest: args.manifest.clone(),
         profile: args.profile.clone(),
-        upgrade: args.upgrade,
         json: false,
         home: args.home.clone(),
         repo_root: args.repo_root.clone(),
